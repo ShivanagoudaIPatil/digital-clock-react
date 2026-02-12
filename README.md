@@ -33,5 +33,5 @@ Start development server:
 npm run dev
 
 ## Live Demo
-digital-clock-react-navy.vercel.app
+https://digital-clock-react-navy.vercel.app/
 
