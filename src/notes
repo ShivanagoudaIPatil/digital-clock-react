@@ -1,0 +1,148 @@
+✅ Digital clock + React summary
+1. React rendering rule
+UI = function(state)
+
+
+Rendering must stay pure.
+
+No timers
+No API calls
+No side effects inside JSX
+
+Rendering only describes UI.
+
+2. What is a side effect?
+
+Anything that touches the outside world:
+
+timers
+
+network requests
+
+event listeners
+
+local storage
+
+DOM manipulation
+
+Side effects belong in useEffect.
+
+3. What useEffect does
+Render UI
+↓
+run useEffect after render
+
+
+useEffect is React’s safe zone for side effects.
+
+4. useEffect structure
+useEffect(() => {
+  // effect (setup)
+
+  return () => {
+    // cleanup (teardown)
+  };
+}, dependencies);
+
+
+Think:
+
+setup → run
+cleanup → undo setup
+
+5. Dependency array meanings
+[]       → run once (on mount)
+[count]  → run when count changes
+(no arr) → run after every render
+
+
+Your clock uses [] → runs once.
+
+6. Why your first version was dangerous
+
+Calling setInterval inside render:
+
+render → start timer
+render → start another timer
+render → start another timer
+
+
+Timers stacked → memory leak.
+
+CPU 🔥
+
+7. Why useEffect fixes it
+component mounts
+→ start 1 timer
+component unmounts
+→ cleanup stops timer
+
+
+One timer only.
+
+Safe lifecycle.
+
+8. What setInterval returns
+interval ID
+
+
+Used to stop it:
+
+clearInterval(id);
+
+
+Without ID → timer runs forever.
+
+9. Cleanup function
+
+Cleanup:
+
+takes no arguments
+
+is stored by React
+
+runs on unmount or dependency change
+
+It remembers variables via closure.
+
+Example:
+
+return () => clearInterval(timer);
+
+
+Cleanup knows timer because JS closures preserve scope.
+
+10. Why rerenders happen
+
+Not because useEffect runs again.
+
+Because:
+
+setNewTime()
+→ state changes
+→ React re-renders
+
+
+State change = render trigger.
+
+11. Full lifecycle of your clock
+mount
+→ useEffect runs
+→ timer starts
+
+every second
+→ setNewTime
+→ re-render
+
+unmount
+→ cleanup runs
+→ timer stops
+
+
+Perfect controlled loop.
+
+🧠 Final mental model
+render = describe UI
+effect = start background work
+cleanup = stop background work
+state change = re-render
